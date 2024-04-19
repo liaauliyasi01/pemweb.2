@@ -1,5 +1,16 @@
-<?php 
+<?php
 require_once 'dbkoneksi.php';
+?>
+<?php
+$_idedit = $_GET['idedit'];
+if (!empty($_idedit)) {
+    $sql = "SELECT * FROM mahasiswa WHERE id=?";
+    $st = $dbh->prepare($sql);
+    $st->execute([$_idedit]);
+    $row = $st->fetch();
+} else {
+    $row = [];
+}
 ?>
 
 <!DOCTYPE html>
@@ -26,18 +37,20 @@ require_once 'dbkoneksi.php';
 <body>
     <form method="post" action="proses.php">
         <label for="nama">Nama Mahasiswa:</label>
-        <input type="text" id="nama" name="nama">
+        <input id="nama" name="nama" type="text" value="<?= $row['nama'] ?>">
 
         <label for="nim">Nim:</label>
-        <input type="text" id="nim" name="nim">
+        <input id="nim" name="nim" type="text" value="<?= $row['nim'] ?>">
 
         <label for="jurusan">Prodi:</label>
-        <input type="text" id="jurusan" name="jurusan">
+        <input id="jurusan" name="jurusan" type="text" value="<?= $row['jurusan'] ?>">
 
         <label for="semester">Semester:</label>
-        <input type="number" id="semester" name="semester">
+        <input id="semester" name="semester" type="text" value="<?= $row['semester'] ?>">
 
-        <input type="submit" name="proses" type="submit" value="Simpan"/>
+        <?php $button = (empty($_idedit)) ? "Simpan" : "Update"; ?>
+        <input type="submit" name="proses" type="submit" value="<?= $button ?>" />
+        <input type="hidden" name="idedit" value="<?= $_idedit ?>" />
     </form>
 </body>
 </html>

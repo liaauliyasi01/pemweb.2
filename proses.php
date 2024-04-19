@@ -1,58 +1,31 @@
-<?php
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nama = $_POST['nama'];
-    $nilai = $_POST['nilai'];
-
-    include 'Mahasiswa.php'; // File dengan definisi kelas Mahasiswa
-
-    $mahasiswa = new Mahasiswa($nama, $nilai);
-    $hasilLulus = $mahasiswa->hasilLulus();
-    $predikat = $mahasiswa->predikat();
-
-    // echo "Nama: $nama<br>";
-    // echo "Nilai: $nilai<br>";
-    // echo "Hasil: $hasilLulus<br>";
-    // echo "Predikat: $predikat<br>";
-}
-
-
+<?php 
+require_once 'dbkoneksi.php';
 ?>
+<?php 
+   $_nama = $_POST['nama'];
+   $_nim = $_POST['nim'];
+   $_jurusan = $_POST['jurusan'];
+   $_semester = $_POST['semester'];
+   $_proses = $_POST['proses'];
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  </head>
-  <body>
- 
+   // array data
+   $ar_data[]=$_nama;
+   $ar_data[]=$_nim;
+   $ar_data[]=$_jurusan;
+   $ar_data[]=$_semester;
 
-    <table class="table mt-5">
-  <thead>
-    <tr>
-      <th scope="col">NO</th>
-      <th scope="col">Nama</th>
-      <th scope="col">Nilai</th>
-      <th scope="col">Hasil</th>
-      <th scope="col">Predikat</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row">1</th>
-      <td> <?=  $nama ?> </td>
-      <td><?= $nilai ?></td>
-      <td><?=  $hasilLulus ?></td>
-      <td><?= $predikat  ?></td>
-    </tr>
-  </tbody>
-</table>
+   if($_proses == "Simpan"){
 
+    $sql = "INSERT INTO mahasiswa (nama,nim,jurusan,semester) VALUES (?,?,?,?)";
+   }else if($_proses == "Update"){
+    $ar_data[]=$_POST['idedit'];
+    $sql = "UPDATE mahasiswa SET nama=?,nim=?,jurusan=?,
+    semester=? WHERE id=?";
+   }
+   if(isset($sql)){
+    $st = $dbh->prepare($sql);
+    $st->execute($ar_data);
+   }
 
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-  </body>
-</html>
+   header('location:index.php');
+?>
